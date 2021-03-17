@@ -42,7 +42,7 @@ public class Home extends AppCompatActivity {
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+                //startActivity(new Intent(getApplicationContext(),MapsActivity.class));
                 finish();
             }
         });

@@ -1,106 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout2"
+    android:background="#D7D7D7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".Registration">
+
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="179dp"
-        android:layout_height="51dp"
-        android:layout_marginEnd="148dp"
-        android:layout_marginRight="148dp"
+        android:layout_width="196dp"
+        android:layout_height="73dp"
+        android:fontFamily='@font/mojfont'
         android:text="Registracija"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="37dp" />
+        android:textColor="@color/bordo"
+        android:textSize="28sp"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="45dp" />
 
     <EditText
         android:id="@+id/name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="Ime"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="109dp"
-        tools:ignore="MissingConstraints"/>
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="149dp" />
 
     <EditText
         android:id="@+id/lastName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="Prezime"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="169dp"
-        tools:ignore="MissingConstraints"/>
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="211dp" />
 
     <EditText
         android:id="@+id/number"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="Broj telefona"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="235dp"
-        tools:ignore="MissingConstraints"/>
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="267dp" />
 
     <EditText
         android:id="@+id/userName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="Korisnicko ime"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="299dp"
-        tools:ignore="MissingConstraints"/>
-
-
+        android:rotationX="0"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="320dp" />
 
     <EditText
         android:id="@+id/email"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="E-mail"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textEmailAddress"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="355dp" />
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="373dp" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_height="32sp"
+        android:ems="12"
         android:hint="Lozinka"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="411dp"
-        tools:ignore="MissingConstraints"/>
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="437dp" />
 
     <Button
         android:id="@+id/regBtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/bordo"
         android:text="Registrovanje"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="139dp"
-        tools:layout_editor_absoluteY="494dp" />
+        tools:layout_editor_absoluteX="127dp"
+        tools:layout_editor_absoluteY="508dp" />
 
     <TextView
         android:id="@+id/log"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Registrovani ste? Prijavite se" />
+        android:text="Registrovani ste? Prijavite se"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="572dp" />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

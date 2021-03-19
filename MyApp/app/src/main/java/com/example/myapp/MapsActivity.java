@@ -8,16 +8,21 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +36,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -61,6 +68,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private HashMap<String,Marker> hashMapMarker = new HashMap<>();
     private Collection<Marker> markers;
     private Button btn, addObject,radiusBtn,dateBtn;
+    public boolean radiusClicked = false;
+    public CircleOptions circleOptions;
+    public EditText radius,date;
+    public String radiusString="";
+    public Circle mapCircle;
+    public MyLocation currentLocation;
+    public SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +91,76 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         objReference=FirebaseDatabase.getInstance().getReference().child("Objects");
         locationManager=(LocationManager)getSystemService(LOCATION_SERVICE);
         sReference= FirebaseStorage.getInstance().getReference();
+
+        addObject = findViewById(R.id.btnAddObj);
+        addObject.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(MapsActivity.this, AddObjectActivity.class));
+
+            }
+        });
+
+        radiusBtn=findViewById(R.id.btnRadius);
+        radius=findViewById(R.id.editRadius);
+        radiusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mapCircle != null)
+                {
+                    mapCircle.remove();
+                }
+                if(!radius.getText().toString().isEmpty())
+                {
+                    if(!radius.getText().toString().equals(radiusString))
+                    {
+                        if(radiusString.equals(""))
+                            radiusClicked = !radiusClicked;
+                        radiusString = radius.getText().toString();
+                        addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
+                    }
+                    else
+                    {
+                        radiusClicked = !radiusClicked;
+                        radiusString = "";
+                    }
+                }
+
+            }
+        });
+
+        searchView=findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String search=searchView.getQuery().toString();
+                if (search != null || !search.equals(""))
+                {
+                    markers=hashMapMarker.values();
+                    for(Marker m : markers)
+                    {
+                        if(m.getTitle().equals(search))
+                        {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),16));
+                            return true;
+                        }
+                    }
+
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
     }
+
+
 
     /**
      * Manipulates the map once available.
@@ -92,11 +175,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getLocationUpdates();
-        //showObjectMarker();
+        showObjectMarker();
         showUsers();
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -310,8 +391,96 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
+
+    private void showObjectMarker() {
+        objReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(snapshot.exists())
+                {
+                    try{
+
+                        addObjectMarker(snapshot.getValue(MyObject.class),snapshot.getKey());
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(MapsActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(snapshot.exists())
+                {
+                    try
+                    {
+                        Marker marker = hashMapMarker.get(snapshot.getKey());
+                        if(marker!=null)
+                        {
+                            marker.remove();
+                            hashMapMarker.remove(snapshot.getKey());
+                        }
+                        addObjectMarker(snapshot.getValue(MyObject.class),snapshot.getKey());
+
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void addObjectMarker(MyObject myObject,String id) {
+
+        LatLng mylocation = new LatLng(myObject.location.getLatitude(), myObject.location.getLongitude());
+        Toast.makeText(MapsActivity.this,"LAT "+mylocation.latitude+"  LONG "+mylocation.longitude,Toast.LENGTH_SHORT).show();
+        Marker objMarker = mMap.addMarker(new MarkerOptions()
+                .position(mylocation)
+                .title(myObject.name)
+                .icon(BitmapFromVector(getApplicationContext(),R.drawable.ic_baseline_store_24))
+
+        );
+
+        mMap.setOnMarkerClickListener(MapsActivity.this);
+        hashMapMarker.put(id,objMarker);
+    }
+
+    private void addCircle(LatLng latlng, float radius) {
+
+        circleOptions = new CircleOptions();
+        circleOptions.center(latlng);
+        circleOptions.radius(radius);
+        circleOptions.strokeColor(Color.argb(255, 255, 0, 0));
+        circleOptions.fillColor(Color.argb(64, 255, 0, 0));
+        circleOptions.strokeWidth(4);
+        circleOptions.visible(true);
+        mapCircle = mMap.addCircle(circleOptions);
+
+    }
+
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return false;
+
+        marker.showInfoWindow();
+        return true;
     }
 }

@@ -11,109 +11,226 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="196dp"
-        android:layout_height="73dp"
+        android:layout_width="194dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="40dp"
         android:fontFamily='@font/mojfont'
         android:text="Registracija"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/bordo"
-        android:textSize="28sp"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="45dp" />
-
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
-        android:ems="12"
-        android:hint="Ime"
-        android:background="@drawable/textview_border"
-        android:backgroundTint="#FFFFFF"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="149dp" />
-
-    <EditText
-        android:id="@+id/lastName"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
-        android:ems="12"
-        android:hint="Prezime"
-        android:background="@drawable/textview_border"
-        android:backgroundTint="#FFFFFF"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="211dp" />
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="32sp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
         android:ems="12"
         android:hint="Broj telefona"
-        android:background="@drawable/textview_border"
-        android:backgroundTint="#FFFFFF"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="267dp" />
-
-    <EditText
-        android:id="@+id/userName"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
-        android:ems="12"
-        android:hint="Korisnicko ime"
-        android:background="@drawable/textview_border"
-        android:backgroundTint="#FFFFFF"
-        android:inputType="textPersonName"
-        android:rotationX="0"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="320dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <EditText
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="32sp"
-        android:ems="12"
-        android:hint="E-mail"
+        android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:ems="12"
+        android:hint="E-mail"
         android:inputType="textEmailAddress"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="373dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Korisničko ime:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/userName"
+        app:layout_constraintTop_toBottomOf="@+id/number" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Lozinka:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="32sp"
-        android:ems="12"
-        android:hint="Lozinka"
+        android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:ems="12"
+        android:hint="Lozinka"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="437dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <EditText
+        android:id="@+id/lastName"
+        android:layout_width="wrap_content"
+        android:layout_height="32sp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
+        android:ems="12"
+        android:hint="Prezime"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Prezime:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/lastName"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="32sp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
+        android:ems="12"
+        android:hint="Ime"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <Button
         android:id="@+id/regBtn"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/bordo"
         android:text="Registrovanje"
-        tools:layout_editor_absoluteX="127dp"
-        tools:layout_editor_absoluteY="508dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Ime:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_registracija" />
 
     <TextView
         android:id="@+id/log"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="Registrovani ste? Prijavite se"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="572dp" />
+        app:layout_constraintTop_toBottomOf="@+id/regBtn" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="E-mail adresa:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/email"
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Broj telefona:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/number"
+        app:layout_constraintTop_toBottomOf="@+id/lastName" />
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="32sp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/textview_border"
+        android:backgroundTint="#FFFFFF"
+        android:ems="12"
+        android:hint="Korisnicko ime"
+        android:inputType="textPersonName"
+        android:rotationX="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <ImageView
+        android:id="@+id/imageView_registracija"
+        android:layout_width="112dp"
+        android:layout_height="107dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/fui_ic_anonymous_white_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.24"
+        app:layout_constraintStart_toEndOf="@+id/imageView_registracija"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <RadioButton
+            android:id="@+id/rBtnVolonter_registracija"
+            android:layout_width="96dp"
+            android:layout_height="38dp"
+            android:text="Volonter" />
+
+        <RadioButton
+            android:id="@+id/rBtnKorisnik_registracija"
+            android:layout_width="96dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="20dp"
+            android:text="Korisnik" />
+    </RadioGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

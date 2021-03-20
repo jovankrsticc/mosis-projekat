@@ -3,10 +3,15 @@ package com.example.myapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +36,10 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,6 +62,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -75,6 +86,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Circle mapCircle;
     public MyLocation currentLocation;
     public SearchView searchView;
+    DatabaseReference geo = FirebaseDatabase.getInstance().getReference().child("Geofence");
+    GeoFire geoFire = new GeoFire(geo);
+    ArrayList<String> arrayListUserIds = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +99,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        fAuth= FirebaseAuth.getInstance();
-        userID=fAuth.getCurrentUser().getUid();
-        reference= FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
-        objReference=FirebaseDatabase.getInstance().getReference().child("Objects");
-        locationManager=(LocationManager)getSystemService(LOCATION_SERVICE);
-        sReference= FirebaseStorage.getInstance().getReference();
+        fAuth = FirebaseAuth.getInstance();
+        userID = fAuth.getCurrentUser().getUid();
+        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+        objReference = FirebaseDatabase.getInstance().getReference().child("Objects");
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        sReference = FirebaseStorage.getInstance().getReference();
 
         addObject = findViewById(R.id.btnAddObj);
         addObject.setOnClickListener(new View.OnClickListener() {
@@ -103,26 +117,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        radiusBtn=findViewById(R.id.btnRadius);
-        radius=findViewById(R.id.editRadius);
+        radiusBtn = findViewById(R.id.btnRadius);
+        radius = findViewById(R.id.editRadius);
         radiusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mapCircle != null)
-                {
+                if (mapCircle != null) {
                     mapCircle.remove();
                 }
-                if(!radius.getText().toString().isEmpty())
-                {
-                    if(!radius.getText().toString().equals(radiusString))
-                    {
-                        if(radiusString.equals(""))
+                if (!radius.getText().toString().isEmpty()) {
+                    if (!radius.getText().toString().equals(radiusString)) {
+                        if (radiusString.equals(""))
                             radiusClicked = !radiusClicked;
                         radiusString = radius.getText().toString();
                         addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
-                    }
-                    else
-                    {
+                    } else {
                         radiusClicked = !radiusClicked;
                         radiusString = "";
                     }
@@ -131,19 +140,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        searchView=findViewById(R.id.searchView);
+        searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                String search=searchView.getQuery().toString();
-                if (search != null || !search.equals(""))
-                {
-                    markers=hashMapMarker.values();
-                    for(Marker m : markers)
-                    {
-                        if(m.getTitle().equals(search))
-                        {
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(),16));
+                String search = searchView.getQuery().toString();
+                if (search != null || !search.equals("")) {
+                    markers = hashMapMarker.values();
+                    for (Marker m : markers) {
+                        if (m.getTitle().equals(search)) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(), 16));
                             return true;
                         }
                     }
@@ -158,7 +164,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        createNotificationChannel();
     }
+
 
 
 
@@ -236,7 +244,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void saveLocation(MyLocation location) {
         reference.child("myLocation").setValue(location);
+        currentLocation=location;
+        if(radiusClicked)
+        {
+            if(mapCircle!=null)
+                mapCircle.remove();
+            addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
+        }
+
+        geoFire.setLocation(userID, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 2);
+        geoQuery.removeAllListeners();
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if(!key.equals(userID))
+                {
+                    arrayListUserIds.add(key);
+                    sendNotification();
+                }
+            }
+            @Override
+            public void onKeyExited(String key) {
+            }
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+            }
+            @Override
+            public void onGeoQueryReady() {
+            }
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+            }
+        });
     }
+
+
 
     private void showUsers() {
 
@@ -482,5 +525,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         marker.showInfoWindow();
         return true;
+    }
+
+    private void createNotificationChannel() {
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+        {
+            CharSequence name = "channel";
+            String description = "channel for notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("notifications", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void sendNotification() {
+        Intent intent = new Intent(this, Home.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notifications")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("USER DETECTED")
+                .setContentText("User spotted nearby")
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(100, builder.build());
     }
 }

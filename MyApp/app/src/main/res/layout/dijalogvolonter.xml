@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TableLayout
+        android:background="@drawable/okvirdialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="20dp">
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/zatvoridialogvolonter"
+                android:gravity="end"
+                android:text="x"
+                android:textAlignment="textEnd"
+                android:textColor="@color/bordo"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="end"
+                android:text="Datum trajanja akcije"
+                android:textColor="@color/bordo"
+                android:textAlignment="textStart" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <EditText
+                android:id="@+id/editDatumaTrajanje_Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="date" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="end"
+                android:text="Udaljenost"
+                android:textColor="@color/bordo"
+                android:textAlignment="textStart" />
+
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <EditText
+                android:id="@+id/editRadius"
+                android:inputType="number" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <CheckBox
+                android:id="@+id/ckprikazvolonter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textColor="@color/bordo"
+                android:text="Prikaži druge volonter" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <CheckBox
+                android:id="@+id/ckprikayklijenata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textColor="@color/bordo"
+                android:text="Prikaži klijente" />
+        </TableRow>
+
+        <TableRow
+            android:layout_height="93dp"
+            android:gravity="center_horizontal">
+
+
+            <Button
+                android:id="@+id/button_save_user_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:backgroundTint="@color/plavafilter"
+                android:text="Filtriraj"
+                android:textAllCaps="false"
+                android:textSize="20dp" />
+
+        </TableRow>
+
+
+
+    </TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class Registration extends AppCompatActivity {
     private Bitmap photo;
     private StorageReference storageRef= FirebaseStorage.getInstance().getReference();
     String userId;
+    String userType;
     private boolean  slika;
     private FirebaseAuth mAuth;
     FirebaseUser firebaseUser;
@@ -60,7 +62,7 @@ public class Registration extends AppCompatActivity {
         lastName=(EditText) findViewById(R.id.lastName);
         number=(EditText) findViewById(R.id.number);
         userName=(EditText) findViewById(R.id.userName);
-        email=(EditText) findViewById(R.id.email);
+        email=(EditText) findViewById(R.id.editRadius);
         password=(EditText) findViewById(R.id.password);
         regBtn=(Button) findViewById(R.id.regBtn);
         log=(TextView)findViewById(R.id.log);
@@ -68,7 +70,7 @@ public class Registration extends AppCompatActivity {
         ref=database.getReference("Users");
         img=(ImageView)findViewById(R.id.imageView_registracija);
         slika=false;
-
+        userType="Korisnik";
 
         if(fAuth.getCurrentUser()!=null)
         {
@@ -101,6 +103,7 @@ public class Registration extends AppCompatActivity {
                 String userNameS =userName.getText().toString();
                 String numberS=number.getText().toString();
 
+
                 if (TextUtils.isEmpty(emailS))
                 {
                     email.setError("Email is required.");
@@ -121,7 +124,7 @@ public class Registration extends AppCompatActivity {
                         {
                             Toast.makeText(Registration.this, "User created.",Toast.LENGTH_SHORT).show();
                             String id=fAuth.getCurrentUser().getUid();
-                            ref.child(id).setValue(new User(nameS,lastNameS,userNameS,numberS, emailS,passwordS));
+                            ref.child(id).setValue(new User(nameS,lastNameS,userNameS,numberS, emailS,passwordS,userType));
 
                             if(slika)
                             {
@@ -130,7 +133,7 @@ public class Registration extends AppCompatActivity {
                                 submit();
                             }
 
-                            startActivity(new Intent(getApplicationContext(),Image.class));
+                            startActivity(new Intent(getApplicationContext(),MapsActivity.class));
                             finish();
                         }
                         else
@@ -215,5 +218,20 @@ public class Registration extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.rBtnKorisnik_registracija:
+                if (checked)
+                    userType="Korisnik";
+                    break;
+            case R.id.rBtnVolonter_registracija:
+                if (checked)
+                    userType="Volonter";
+                    break;
+        }
     }
 }

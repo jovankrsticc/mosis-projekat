@@ -42,15 +42,6 @@
         android:layout_below="@+id/btnAddObj"
         android:text="Radius" />
 
-    <EditText
-        android:id="@+id/editRadius"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Radius"
-        android:layout_below="@+id/btnRadius"
-        />
-
     <!--Button
         android:id="@+id/btnDate"
         android:layout_width="match_parent"

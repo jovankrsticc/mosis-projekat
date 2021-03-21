@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,10 +26,13 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -69,6 +73,7 @@ import java.util.HashMap;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
+    private TextView cancelDialogButton;
     private DatabaseReference reference,objReference;
     private FirebaseAuth fAuth;
     private StorageReference sReference;
@@ -122,7 +127,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         radiusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mapCircle != null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(MapsActivity.this);
+                View popupInputDialogView = layoutInflater.inflate(R.layout.dijalogvolonter, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MapsActivity.this);
+                // Set title, icon, can not cancel properties.
+                //alertDialogBuilder.setTitle("User Data Collection Dialog.");
+                //alertDialogBuilder.setIcon(R.drawable.ic_launcher_background);
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setView(popupInputDialogView);
+
+
+                // Set the inflated layout view object to the AlertDialog builder.
+                alertDialogBuilder.setView(popupInputDialogView);
+
+                // Create AlertDialog and show.
+                final AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
+                lp.dimAmount=0.0f;
+                alertDialog.getWindow().setAttributes(lp);
+                alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+                alertDialog.show();
+                cancelDialogButton = findViewById(R.id.zatvoridialogvolonter);
+                cancelDialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.cancel();
+                    }
+                });
+
+                /*if (mapCircle != null) {
                     mapCircle.remove();
                 }
                 if (!radius.getText().toString().isEmpty()) {
@@ -135,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         radiusClicked = !radiusClicked;
                         radiusString = "";
                     }
-                }
+                }*/
 
             }
         });

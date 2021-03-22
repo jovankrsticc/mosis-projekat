@@ -2,36 +2,52 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout2"
-    android:background="#D7D7D7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Registration">
+    android:background="@color/okvir"
+    tools:context=".Profil">
 
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="194dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily='@font/mojfont'
-        android:text="Registracija"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/bordo"
-        android:textSize="18sp"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="85dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_poruke"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="151dp"
+        android:layout_height="126dp"
+        android:src="@drawable/ic_mapa"
+        app:layout_constraintBottom_toTopOf="@+id/searchView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="85dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_profil"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
     <EditText
         android:id="@+id/profil_telefon"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="Broj telefona"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,12 +56,14 @@
 
     <EditText
         android:id="@+id/profil_adresa"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="E-mail"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,12 +94,14 @@
 
     <EditText
         android:id="@+id/profil_lozinka"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="Lozinka"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,12 +110,14 @@
 
     <EditText
         android:id="@+id/profil_prezime"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="Prezime"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -115,12 +137,14 @@
 
     <EditText
         android:id="@+id/profil_ime"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="Ime"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -131,9 +155,9 @@
         android:id="@+id/btnIzmenaProfila"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:backgroundTint="@color/bordo"
-        android:text="Registrovanje"
+        android:text="Izmena"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profil_lozinka" />
@@ -148,18 +172,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/profil_ime"
         app:layout_constraintTop_toBottomOf="@+id/imageView_registracija" />
-
-    <TextView
-        android:id="@+id/log"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Registrovani ste? Prijavite se"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnIzmenaProfila" />
 
     <TextView
         android:id="@+id/textView10"
@@ -185,12 +197,14 @@
 
     <EditText
         android:id="@+id/profil_korisnicko"
-        android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_width="300sp"
+        android:layout_height="35sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/textview_border"
         android:backgroundTint="#FFFFFF"
+        android:clickable="false"
         android:ems="12"
+        android:enabled="false"
         android:hint="Korisnicko ime"
         android:inputType="textPersonName"
         android:rotationX="0"
@@ -203,38 +217,45 @@
         android:layout_width="112dp"
         android:layout_height="107dp"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/fui_ic_anonymous_white_24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
         tools:srcCompat="@tools:sample/avatars" />
 
     <RadioGroup
         android:id="@+id/rbtntipkorisnika"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="103dp"
+        android:layout_height="97dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.24"
+        app:layout_constraintHorizontal_bias="0.238"
         app:layout_constraintStart_toEndOf="@+id/imageView_registracija"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/textView19">
 
         <RadioButton
             android:id="@+id/rbUkljuciNotifikacije"
             android:layout_width="96dp"
             android:layout_height="38dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="Volonter" />
+            android:text="Ukluči" />
 
         <RadioButton
             android:id="@+id/rbIsljuci_notifikacije"
             android:layout_width="96dp"
             android:layout_height="35dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:checked="true"
-            android:onClick="onRadioButtonClicked"
-            android:text="Korisnik" />
+            android:text="Isključi" />
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Notifikacije"
+        app:layout_constraintEnd_toEndOf="@+id/rbtntipkorisnika"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toStartOf="@+id/rbtntipkorisnika"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

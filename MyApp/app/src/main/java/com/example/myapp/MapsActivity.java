@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +73,9 @@ import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
 
+    private View popupInputDialogView;
     private GoogleMap mMap;
+    private ImageView btnFilterVolonter, addObject,profilpoziv;
     private TextView cancelDialogButton;
     private DatabaseReference reference,objReference;
     private FirebaseAuth fAuth;
@@ -83,7 +86,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String userID;
     private HashMap<String,Marker> hashMapMarker = new HashMap<>();
     private Collection<Marker> markers;
-    private Button btn, addObject,radiusBtn,dateBtn;
+    private Button btn,radiusBtn,dateBtn;
+
     public boolean radiusClicked = false;
     public CircleOptions circleOptions;
     public EditText radius,date;
@@ -91,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Circle mapCircle;
     public MyLocation currentLocation;
     public SearchView searchView;
+    private AlertDialog alertDialog;
     DatabaseReference geo = FirebaseDatabase.getInstance().getReference().child("Geofence");
     GeoFire geoFire = new GeoFire(geo);
     ArrayList<String> arrayListUserIds = new ArrayList<String>();
@@ -111,6 +116,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         sReference = FirebaseStorage.getInstance().getReference();
 
+        profilpoziv = findViewById(R.id.mojprofil_volonter);
+        profilpoziv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MapsActivity.this, Profil.class));
+            }
+        });
+
         addObject = findViewById(R.id.btnAddObj);
         addObject.setOnClickListener(new View.OnClickListener() {
 
@@ -122,13 +135,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        radiusBtn = findViewById(R.id.btnRadius);
-        radius = findViewById(R.id.editRadius);
-        radiusBtn.setOnClickListener(new View.OnClickListener() {
+        btnFilterVolonter = findViewById(R.id.btnFilterOpenVolonter);
+
+        btnFilterVolonter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflater = LayoutInflater.from(MapsActivity.this);
-                View popupInputDialogView = layoutInflater.inflate(R.layout.dijalogvolonter, null);
+                popupInputDialogView = layoutInflater.inflate(R.layout.dijalogvolonter, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MapsActivity.this);
                 // Set title, icon, can not cancel properties.
                 //alertDialogBuilder.setTitle("User Data Collection Dialog.");
@@ -141,20 +154,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 alertDialogBuilder.setView(popupInputDialogView);
 
                 // Create AlertDialog and show.
-                final AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog = alertDialogBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
                 lp.dimAmount=0.0f;
                 alertDialog.getWindow().setAttributes(lp);
                 alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
                 alertDialog.show();
-                cancelDialogButton = findViewById(R.id.zatvoridialogvolonter);
-                cancelDialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        alertDialog.cancel();
-                    }
-                });
+                /*cancelDialogButton = findViewById(R.id.zatvoridialogvolonter);
+                if(cancelDialogButton!=null)
+                {
+                    cancelDialogButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alertDialog.cancel();
+                        }
+                    });
+                }*/
+
 
                 /*if (mapCircle != null) {
                     mapCircle.remove();
@@ -174,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        searchView = findViewById(R.id.searchView);
+        searchView = findViewById(R.id.searchView2);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -202,8 +219,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    public void zatvoridialogvolontera(View view)
+    {
+        alertDialog.cancel();
+    }
 
+    public void filtriranjevolontera(View view)
 
+    {
+        radius =popupInputDialogView.findViewById(R.id.profil_adresa);//findViewById(R.id.editRadius);
+        if (mapCircle != null) {
+            mapCircle.remove();
+        }
+        if (!radius.getText().toString().isEmpty()) {
+            if (!radius.getText().toString().equals(radiusString)) {
+                if (radiusString.equals(""))
+                    radiusClicked = !radiusClicked;
+                radiusString = radius.getText().toString();
+                addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
+            } else {
+                radiusClicked = !radiusClicked;
+                radiusString = "";
+            }
+        }
+        alertDialog.cancel();
+
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -348,8 +389,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
 
                             addMarker(snapshot.getValue(User.class),snapshot.getKey(),"friend");
-                            // LatLng l=new LatLng(snapshot.child("myLocation").getValue(MyLocation.class).getLatitude(),snapshot.child("myLocation").getValue(MyLocation.class).getLongitude());
-                            // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,5));
+                            LatLng l=new LatLng(snapshot.child("myLocation").getValue(MyLocation.class).getLatitude(),snapshot.child("myLocation").getValue(MyLocation.class).getLongitude());
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,10));
                         }
 
                         catch (Exception e)
@@ -397,9 +438,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 @Override
                                 public boolean onResourceReady(Bitmap resource, java.lang.Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+
+                                    Bitmap smallMarker = Bitmap.createScaledBitmap(resource, 100, 100, false);
+                                    //Marker newMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(value.getMyLocation().getLatitude(), value.getMyLocation().getLongitude()))
+                                    //        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
                                     Marker marker = mMap.addMarker(new MarkerOptions()
                                             .position(location)
-                                            .icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
                                             .title(user.userName)
                                             .snippet("Ime: "+user.firstName+"\n"+
                                                     "Prezime: "+user.lastName+"\n")

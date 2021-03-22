@@ -31,7 +31,7 @@ public class User {
         this.number=number;
         this.email=email;
         this.password=password;
-        this.userType="user";
+        this.userType=userType;
         this.rate=0;
         this.myLocation= new MyLocation();
     }

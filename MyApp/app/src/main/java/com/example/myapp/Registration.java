@@ -58,13 +58,13 @@ public class Registration extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        name=(EditText) findViewById(R.id.name);
-        lastName=(EditText) findViewById(R.id.lastName);
-        number=(EditText) findViewById(R.id.number);
-        userName=(EditText) findViewById(R.id.userName);
-        email=(EditText) findViewById(R.id.editRadius);
-        password=(EditText) findViewById(R.id.password);
-        regBtn=(Button) findViewById(R.id.regBtn);
+        name=(EditText) findViewById(R.id.profil_ime);
+        lastName=(EditText) findViewById(R.id.profil_prezime);
+        number=(EditText) findViewById(R.id.profil_telefon);
+        userName=(EditText) findViewById(R.id.profil_korisnicko);
+        email=(EditText) findViewById(R.id.profil_adresa);
+        password=(EditText) findViewById(R.id.profil_lozinka);
+        regBtn=(Button) findViewById(R.id.btnIzmenaProfila);
         log=(TextView)findViewById(R.id.log);
         fAuth=FirebaseAuth.getInstance();
         ref=database.getReference("Users");
@@ -74,7 +74,7 @@ public class Registration extends AppCompatActivity {
 
         if(fAuth.getCurrentUser()!=null)
         {
-            startActivity(new Intent(getApplicationContext(),Home.class));
+            startActivity(new Intent(getApplicationContext(),MapsActivity.class));
             finish();
         }
 
@@ -128,7 +128,6 @@ public class Registration extends AppCompatActivity {
 
                             if(slika)
                             {
-
                                 userId = id;
                                 submit();
                             }
@@ -224,11 +223,11 @@ public class Registration extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
 
         switch(view.getId()) {
-            case R.id.rBtnKorisnik_registracija:
+            case R.id.rbIsljuci_notifikacije:
                 if (checked)
                     userType="Korisnik";
                     break;
-            case R.id.rBtnVolonter_registracija:
+            case R.id.rbUkljuciNotifikacije:
                 if (checked)
                     userType="Volonter";
                     break;

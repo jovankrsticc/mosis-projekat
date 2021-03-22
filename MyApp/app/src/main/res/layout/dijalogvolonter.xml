@@ -18,6 +18,7 @@
             <TextView
                 android:id="@+id/zatvoridialogvolonter"
                 android:gravity="end"
+                android:onClick="zatvoridialogvolontera"
                 android:text="x"
                 android:textAlignment="textEnd"
                 android:textColor="@color/bordo"
@@ -78,7 +79,7 @@
 
 
             <EditText
-                android:id="@+id/editRadius"
+                android:id="@+id/profil_adresa"
                 android:inputType="number" />
 
         </TableRow>
@@ -121,12 +122,13 @@
 
 
             <Button
-                android:id="@+id/button_save_user_data"
+                android:id="@+id/btnfiltervolonter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:gravity="center_horizontal"
                 android:backgroundTint="@color/plavafilter"
+                android:gravity="center_horizontal"
+                android:onClick="filtriranjevolontera"
                 android:text="Filtriraj"
                 android:textAllCaps="false"
                 android:textSize="20dp" />

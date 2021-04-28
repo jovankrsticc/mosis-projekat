@@ -55,8 +55,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
                 String emailAdresa = snapshot.child(trenutniKorisnik).child("email").getValue(String.class);
                 String lozinka = snapshot.child(trenutniKorisnik).child("password").getValue(String.class);
                 String brojTelefona = snapshot.child(trenutniKorisnik).child("number").getValue(String.class);
-                String ocena = snapshot.child(trenutniKorisnik).child("rate").getValue(String.class);
-                ulogovaniKorisnik = new User(imeKorisnika, prezimeKorisnika, emailAdresa, korisnickoIme, brojTelefona, lozinka, ocena);
+                Integer ocena = snapshot.child(trenutniKorisnik).child("rate").getValue(Integer.class);
+                String tipkorisnika = snapshot.child(trenutniKorisnik).child("userType").getValue(String.class);
+                ulogovaniKorisnik = new User(imeKorisnika, prezimeKorisnika, emailAdresa, korisnickoIme, brojTelefona, lozinka, ocena,tipkorisnika);
             }
 
             @Override

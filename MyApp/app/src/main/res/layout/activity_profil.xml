@@ -155,7 +155,7 @@
         android:id="@+id/btnIzmenaProfila"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="28dp"
         android:backgroundTint="@color/bordo"
         android:text="Izmena"
         app:layout_constraintEnd_toEndOf="parent"

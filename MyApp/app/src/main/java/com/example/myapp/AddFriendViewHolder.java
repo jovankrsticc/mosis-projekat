@@ -10,14 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AddFriendViewHolder extends RecyclerView.ViewHolder
 {
 
-    TextView mUserName, mUuidKorisnika;
+    TextView mUserName, mUuidKorisnika,mPrezime;
     Button mAddFriend;
 
     public AddFriendViewHolder(@NonNull View itemView) {
         super(itemView);
         mUserName = itemView.findViewById(R.id.rang_user_name);
+        mPrezime = itemView.findViewById(R.id.rang_prezime);
         mUuidKorisnika = itemView.findViewById(R.id.uuid_korisnika);
         mUuidKorisnika.setVisibility(View.GONE);
         mAddFriend = itemView.findViewById(R.id.dodajPrijatelja);
+
     }
 }

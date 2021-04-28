@@ -35,7 +35,18 @@ public class User {
         this.rate=0;
         this.myLocation= new MyLocation();
     }
-
+    public User(String firstName,String lastName, String userName, String number,String email,String password,Integer rate,String userType)
+    {
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.userName=userName;
+        this.number=number;
+        this.email=email;
+        this.password=password;
+        this.userType=userType;
+        this.rate=rate;
+        this.myLocation= new MyLocation();
+    }
 
 
 }

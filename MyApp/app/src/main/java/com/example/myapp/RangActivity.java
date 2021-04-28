@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
@@ -28,9 +29,10 @@ public class RangActivity extends AppCompatActivity {
 
     FirebaseRecyclerAdapter<User, AddFriendViewHolder> adapter;
     FirebaseRecyclerOptions<User> options;
-    DatabaseReference korisniciReference, zahteviZaPrijateljstvoReference, korisnik;
+    DatabaseReference korisniciReference, zahteviZaPrijateljstvoReference, korisnik,listaprijatelja;
     RecyclerView recyclerView;
     FirebaseAuth mAuth;
+    private String userID;
     Query query;
     String trenutniKorisnik;
     User ulogovaniKorisnik;
@@ -39,7 +41,11 @@ public class RangActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rang);
-        korisniciReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mAuth = FirebaseAuth.getInstance();
+        userID = mAuth.getCurrentUser().getUid();
+        korisniciReference = FirebaseDatabase.getInstance().getReference().child("Friendships").child(userID);
+        listaprijatelja = FirebaseDatabase.getInstance().getReference().child("Friendships");
         zahteviZaPrijateljstvoReference = FirebaseDatabase.getInstance().getReference().child("Friend requests");
         query = korisniciReference.orderByChild("rate");
         //korisniciReference = (DatabaseReference) korisniciReference.orderByChild("brojTokena");
@@ -48,7 +54,7 @@ public class RangActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         trenutniKorisnik = mAuth.getCurrentUser().getUid();
         korisnik = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference db= korisnik.child("Users");
+        DatabaseReference db= korisnik.child("Friendships");
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -58,8 +64,9 @@ public class RangActivity extends AppCompatActivity {
                 String emailAdresa = snapshot.child(trenutniKorisnik).child("email").getValue(String.class);
                 String lozinka = snapshot.child(trenutniKorisnik).child("password").getValue(String.class);
                 String brojTelefona = snapshot.child(trenutniKorisnik).child("number").getValue(String.class);
-                String ocena = snapshot.child(trenutniKorisnik).child("rate").getValue(String.class);
-                ulogovaniKorisnik = new User(imeKorisnika, prezimeKorisnika, emailAdresa, korisnickoIme, brojTelefona, lozinka, ocena);
+                Integer ocena = snapshot.child(trenutniKorisnik).child("rate").getValue(Integer.class);
+                String tipkorisnika = snapshot.child(trenutniKorisnik).child("userType").getValue(String.class);
+                ulogovaniKorisnik = new User(imeKorisnika, prezimeKorisnika, emailAdresa, korisnickoIme, brojTelefona, lozinka, ocena,tipkorisnika);
 
             }
 
@@ -76,15 +83,21 @@ public class RangActivity extends AppCompatActivity {
         adapter = new FirebaseRecyclerAdapter<User, AddFriendViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull AddFriendViewHolder holder, int position, @NonNull User model) {
-                holder.mUserName.setText(model.userName);
+                holder.mUserName.setText(model.firstName);
+
+                holder.mPrezime.setText(model.lastName);
                 holder.mUuidKorisnika.setText(getRef(position).getKey().toString());
                 String idKorisnika = getRef(position).getKey().toString();
+
                 holder.mAddFriend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DatabaseReference rf = zahteviZaPrijateljstvoReference.child(idKorisnika).child(trenutniKorisnik);
-                        //zahteviZaPrijateljstvoReference.child(getRef(position).getKey().toString()).child(key).setValue(trenutniKorisnik);
-                        rf.setValue(ulogovaniKorisnik);
+                        //DatabaseReference rf = zahteviZaPrijateljstvoReference.child(idKorisnika).child(trenutniKorisnik);
+                        PorukaZaglavlje.kome=idKorisnika;
+
+                        startActivity(new Intent(RangActivity.this, Chat.class));
+                        //ovo bilo pod komentar zahteviZaPrijateljstvoReference.child(getRef(position).getKey().toString()).child(key).setValue(trenutniKorisnik);
+                        //rf.setValue(ulogovaniKorisnik);
                     }
                 });
             }

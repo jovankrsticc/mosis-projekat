@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+       <KeyFrameSet>
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            motion:layout_constraintEnd_toStartOf="@+id/btnFilterOpenVolonter"
+            android:layout_width="313dp"
+            android:layout_height="42dp"
+            motion:layout_constraintHorizontal_bias="0.0"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/searchView2"
+            motion:layout_constraintTop_toTopOf="@+id/btnFilterOpenVolonter"
+            motion:layout_constraintBottom_toTopOf="@+id/map"
+            android:layout_marginBottom="8dp" />
+        <Constraint
+            android:layout_marginEnd="8dp"
+            android:layout_height="44dp"
+            android:layout_marginBottom="0dp"
+            motion:layout_constraintBottom_toTopOf="@+id/map"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="69dp"
+            motion:layout_constraintStart_toEndOf="@+id/searchView2"
+            android:id="@+id/btnFilterOpenVolonter"
+            motion:layout_constraintTop_toBottomOf="@+id/imageView8"
+            motion:layout_constraintVertical_bias="0.62"
+            android:layout_marginTop="8dp" />
+        <Constraint
+            android:layout_height="562dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="394dp"
+            motion:layout_constraintTop_toBottomOf="@+id/searchView2"
+            android:id="@+id/map" />
+        <Constraint
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="151dp"
+            android:layout_height="126dp"
+            motion:layout_constraintBottom_toTopOf="@+id/searchView2"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="0dp"
+            android:id="@+id/imageView8"
+            android:layout_marginBottom="8dp" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+    </ConstraintSet>
+</MotionScene>

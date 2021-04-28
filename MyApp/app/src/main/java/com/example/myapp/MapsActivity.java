@@ -120,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         profilpoziv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MapsActivity.this, Profil.class));
+                startActivity(new Intent(MapsActivity.this, RangActivity.class));
             }
         });
 

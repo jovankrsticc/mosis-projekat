@@ -26,6 +26,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -85,6 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int MIN_DISTANCE=1;
     private String userID;
     private HashMap<String,Marker> hashMapMarker = new HashMap<>();
+    private HashMap<Marker,String> hashMapMarkerID = new HashMap<>();
     private Collection<Marker> markers;
     private Button btn,radiusBtn,dateBtn;
 
@@ -190,6 +192,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+
 
         searchView = findViewById(R.id.searchView2);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -384,6 +388,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Marker marker = hashMapMarker.get(snapshot.getKey());
                             if(marker!=null)
                             {
+                                hashMapMarkerID.remove(marker);
                                 marker.remove();
                                 hashMapMarker.remove(snapshot.getKey());
                             }
@@ -454,6 +459,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     );
                                     mMap.setOnMarkerClickListener(MapsActivity.this);
                                     hashMapMarker.put(id,marker);
+                                    hashMapMarkerID.put(marker,id);
+                                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                                        // Use default InfoWindow frame
+                                        @Override
+                                        public View getInfoWindow(Marker arg0) {
+                                            return null;
+                                        }
+
+                                        // Defines the contents of the InfoWindow
+                                        @Override
+                                        public View getInfoContents(Marker arg0) {
+
+                                            // Getting view from the layout file infowindowlayout.xml
+                                            View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
+
+                                            LatLng latLng = arg0.getPosition();
+
+                                            Button poruka = (Button) v.findViewById(R.id.poruka_btn);
+                                            TextView tv1 = (TextView) v.findViewById(R.id.textView1);
+                                            TextView tv2 = (TextView) v.findViewById(R.id.textView2);
+                                            String title=arg0.getTitle();
+                                            String informations=arg0.getSnippet();
+
+                                            tv1.setText(title);
+                                            tv2.setText(informations);
+
+
+
+
+                                            return v;
+
+                                        }
+                                    });
 
                                     return true;
 
@@ -485,6 +524,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.setOnMarkerClickListener(MapsActivity.this);
             hashMapMarker.put(id,marker1);
+            hashMapMarkerID.put(marker1,id);
 
         }
         else
@@ -541,7 +581,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Marker marker = hashMapMarker.get(snapshot.getKey());
                         if(marker!=null)
                         {
+                            hashMapMarkerID.remove(marker);
                             marker.remove();
+
                             hashMapMarker.remove(snapshot.getKey());
                         }
                         addObjectMarker(snapshot.getValue(MyObject.class),snapshot.getKey());
@@ -585,6 +627,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMarkerClickListener(MapsActivity.this);
         hashMapMarker.put(id,objMarker);
+        //ID.put(objMarker,id);
     }
 
     private void addCircle(LatLng latlng, float radius) {
@@ -604,6 +647,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onMarkerClick(Marker marker) {
 
         marker.showInfoWindow();
+        ImageView b=(ImageView) findViewById(R.id.Porukebtn_map);
+        b.setVisibility(View.VISIBLE);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PorukaZaglavlje.kome=hashMapMarkerID.get(marker);
+                Log.d("firebase",PorukaZaglavlje.kome);
+                startActivity(new Intent(MapsActivity.this, Chat.class));
+            }
+        });
+
         return true;
     }
 

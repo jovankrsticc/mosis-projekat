@@ -34,6 +34,19 @@
         app:layout_constraintTop_toTopOf="@+id/map"
         app:layout_constraintVertical_bias="0.93" />
 
+    <ImageView
+        android:id="@+id/Porukebtn_map"
+        android:layout_width="74dp"
+        android:layout_height="58dp"
+        android:src="@drawable/ic_poruke_brn"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintVertical_bias="0.93" />
+
     <SearchView
         android:id="@+id/searchView2"
         android:layout_width="313dp"

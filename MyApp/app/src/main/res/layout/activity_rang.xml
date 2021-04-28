@@ -8,48 +8,69 @@
     android:background="@color/okvir"
     tools:context=".RangActivity">
 
-    <ImageView
-        android:id="@+id/maptabprofil"
-        android:layout_width="151dp"
-        android:layout_height="126dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/ic_mapa"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/mojprofil_volonter2"
-        android:layout_width="85dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_profil"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/maptabprofil"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="171dp"
+            android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/poruketabprofil"
-        android:layout_width="85dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_poruke"
-        app:layout_constraintEnd_toStartOf="@+id/maptabprofil"
-        app:layout_constraintHorizontal_bias="0.313"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="178dp"
+                android:gravity="center|center_vertical"
+                android:orientation="horizontal">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="381dp"
-        android:layout_height="672dp"
-        android:layout_marginTop="55dp"
-        android:background="@color/okvir"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/poruketabprofil" />
+                <ImageView
+                    android:id="@+id/poruketabprofil"
+                    android:layout_width="85dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/ic_poruke" />
+
+                <ImageView
+                    android:id="@+id/maptabprofil"
+                    android:layout_width="151dp"
+                    android:layout_height="126dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/ic_mapa" />
+
+                <ImageView
+                    android:id="@+id/mojprofil_volonter2"
+                    android:layout_width="85dp"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="16dp"
+                    android:src="@drawable/ic_profil" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="395dp"
+            android:layout_height="71dp"
+            android:background="@color/sivaprofil"
+            android:gravity="right|center_horizontal|center_vertical"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/mojprofilprikazbrnrang"
+                android:layout_width="229dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/bordo"
+                android:text="Moj Profil" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="394dp"
+            android:layout_height="581dp"
+            android:background="@color/okvir" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

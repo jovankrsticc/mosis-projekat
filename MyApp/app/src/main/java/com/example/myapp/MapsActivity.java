@@ -31,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -76,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private View popupInputDialogView;
     private GoogleMap mMap;
+    private CheckBox filterkorisnik,filtervolonter;
     private ImageView btnFilterVolonter, addObject,profilpoziv,porukepoziv;
     private TextView cancelDialogButton;
     private DatabaseReference reference,objReference;
@@ -89,6 +92,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private HashMap<Marker,String> hashMapMarkerID = new HashMap<>();
     private Collection<Marker> markers;
     private Button btn,radiusBtn,dateBtn;
+
+    public boolean prikazikorisnike=true;
+    public boolean prikazivolontere=true;
+
+
 
     public boolean radiusClicked = false;
     public CircleOptions circleOptions;
@@ -117,6 +125,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         objReference = FirebaseDatabase.getInstance().getReference().child("Objects");
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         sReference = FirebaseStorage.getInstance().getReference();
+
+
 
         porukepoziv= (ImageView) findViewById(R.id.poruketab);
         porukepoziv.setOnClickListener(new View.OnClickListener() {
@@ -171,9 +181,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
                 lp.dimAmount=0.0f;
+
                 alertDialog.getWindow().setAttributes(lp);
                 alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
                 alertDialog.show();
+
+                filterkorisnik= alertDialog.findViewById(R.id.ckprikayklijenata);
+                filtervolonter=alertDialog.findViewById(R.id.ckprikazvolonter);
+                filterkorisnik.setChecked(prikazikorisnike);
+                filtervolonter.setChecked(prikazikorisnike);
+
+                filterkorisnik.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        prikazikorisnike=b;
+                        if(b)
+                        {
+                            Log.d("testjox","Korisnik True");
+                        }
+                        else
+                        {
+                            Log.d("testjox","Korisnik False");
+                        }
+                    }
+                });
+
+                filtervolonter=alertDialog.findViewById(R.id.ckprikazvolonter);
+                filtervolonter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        prikazivolontere=b;
+                    }
+                });
                 /*cancelDialogButton = findViewById(R.id.zatvoridialogvolonter);
                 if(cancelDialogButton!=null)
                 {
@@ -258,6 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         alertDialog.cancel();
+        showUsers();
 
     }
     /**
@@ -436,113 +476,121 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void addMarker(User user,String id,String typeMarker) {
-        LatLng location = new LatLng(user.myLocation.getLatitude(), user.myLocation.getLongitude());
-        if(typeMarker.equals("friend"))
+        Log.d("testjox","Tip korisnika "+user.userType);
+        if(user.userType.equals("Korisnik") & prikazikorisnike==true)
         {
-            sReference.child("profile_images").child(id).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(MapsActivity.this)
-                            .asBitmap()
-                            .load(uri.toString())
-                            .listener(new RequestListener<Bitmap>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, java.lang.Object model, Target<Bitmap> target, boolean isFirstResource) {
+            Log.d("testjox","i odobrenje ima ");
+        }
+        if((user.userType.equals("Volonter") && prikazivolontere==true)||(user.userType.equals("Korisnik") && prikazikorisnike==true))
+        {
 
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(Bitmap resource, java.lang.Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-
-                                    Bitmap smallMarker = Bitmap.createScaledBitmap(resource, 100, 100, false);
-                                    //Marker newMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(value.getMyLocation().getLatitude(), value.getMyLocation().getLongitude()))
-                                    //        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-
-                                    Marker marker = mMap.addMarker(new MarkerOptions()
-                                            .position(location)
-                                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
-                                            .title(user.userName)
-                                            .snippet("Ime: "+user.firstName+"\n"+
-                                                    "Prezime: "+user.lastName+"\n")
-
-
-                                    );
-                                    mMap.setOnMarkerClickListener(MapsActivity.this);
-                                    hashMapMarker.put(id,marker);
-                                    hashMapMarkerID.put(marker,id);
-                                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-                                        // Use default InfoWindow frame
-                                        @Override
-                                        public View getInfoWindow(Marker arg0) {
-                                            return null;
-                                        }
-
-                                        // Defines the contents of the InfoWindow
-                                        @Override
-                                        public View getInfoContents(Marker arg0) {
-
-                                            // Getting view from the layout file infowindowlayout.xml
-                                            View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
-
-                                            LatLng latLng = arg0.getPosition();
-
-                                            Button poruka = (Button) v.findViewById(R.id.poruka_btn);
-                                            TextView tv1 = (TextView) v.findViewById(R.id.textView1);
-                                            TextView tv2 = (TextView) v.findViewById(R.id.textView2);
-                                            String title=arg0.getTitle();
-                                            String informations=arg0.getSnippet();
-
-                                            tv1.setText(title);
-                                            tv2.setText(informations);
-
-
-
-
-                                            return v;
-
-                                        }
-                                    });
-
-                                    return true;
-
-                                }
-                            })
-                            .centerCrop()
-                            .preload();
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
+                Log.d("testjox","Tip korisnika "+user.userType);
+                LatLng location = new LatLng(user.myLocation.getLatitude(), user.myLocation.getLongitude());
+                if (typeMarker.equals("friend")) {
+                    sReference.child("profile_images").child(id).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(MapsActivity.this,"ERROR"+e.getMessage(),Toast.LENGTH_SHORT).show();
-                            addMarker(user,id,"user");
+                        public void onSuccess(Uri uri) {
+                            Glide.with(MapsActivity.this)
+                                    .asBitmap()
+                                    .load(uri.toString())
+                                    .listener(new RequestListener<Bitmap>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, java.lang.Object model, Target<Bitmap> target, boolean isFirstResource) {
+
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onResourceReady(Bitmap resource, java.lang.Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+
+                                            Bitmap smallMarker = Bitmap.createScaledBitmap(resource, 100, 100, false);
+                                            //Marker newMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(value.getMyLocation().getLatitude(), value.getMyLocation().getLongitude()))
+                                            //        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+                                            Marker marker = mMap.addMarker(new MarkerOptions()
+                                                    .position(location)
+                                                    .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
+                                                    .title(user.userName)
+                                                    .snippet("Ime: " + user.firstName + "\n" +
+                                                            "Prezime: " + user.lastName + "\n")
+
+
+                                            );
+                                            mMap.setOnMarkerClickListener(MapsActivity.this);
+                                            hashMapMarker.put(id, marker);
+                                            hashMapMarkerID.put(marker, id);
+                                            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                                                // Use default InfoWindow frame
+                                                @Override
+                                                public View getInfoWindow(Marker arg0) {
+                                                    return null;
+                                                }
+
+                                                // Defines the contents of the InfoWindow
+                                                @Override
+                                                public View getInfoContents(Marker arg0) {
+
+                                                    // Getting view from the layout file infowindowlayout.xml
+                                                    View v = getLayoutInflater().inflate(R.layout.infowindowlayout, null);
+
+                                                    LatLng latLng = arg0.getPosition();
+
+                                                    Button poruka = (Button) v.findViewById(R.id.poruka_btn);
+                                                    TextView tv1 = (TextView) v.findViewById(R.id.textView1);
+                                                    TextView tv2 = (TextView) v.findViewById(R.id.textView2);
+                                                    String title = arg0.getTitle();
+                                                    String informations = arg0.getSnippet();
+
+                                                    tv1.setText(title);
+                                                    tv2.setText(informations);
+
+
+                                                    return v;
+
+                                                }
+                                            });
+
+                                            return true;
+
+                                        }
+                                    })
+                                    .centerCrop()
+                                    .preload();
                         }
-                    });
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(MapsActivity.this, "ERROR" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    addMarker(user, id, "user");
+                                }
+                            });
 
+                } else if (typeMarker.equals("user")) {
+                    Marker marker1 = mMap.addMarker(new MarkerOptions()
+                            .position(location)
+                            .title(user.userName)
+                            .icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_person_pin_circle_24))
+                            .snippet("Ime: " + user.firstName + "\n" + "Prezime: " + user.lastName)
+
+                    );
+
+
+                    mMap.setOnMarkerClickListener(MapsActivity.this);
+                    hashMapMarker.put(id, marker1);
+                    hashMapMarkerID.put(marker1, id);
+
+                } else {
+                    Toast.makeText(MapsActivity.this, "Greska", Toast.LENGTH_SHORT).show();
+                }
         }
-        else if(typeMarker.equals("user"))
-        {
-            Marker marker1 = mMap.addMarker(new MarkerOptions()
-                    .position(location)
-                    .title(user.userName)
-                    .icon(BitmapFromVector(getApplicationContext(),R.drawable.ic_baseline_person_pin_circle_24))
-                    .snippet("Ime: "+user.firstName+"\n"+"Prezime: "+user.lastName)
 
-            );
-
-
-            mMap.setOnMarkerClickListener(MapsActivity.this);
-            hashMapMarker.put(id,marker1);
-            hashMapMarkerID.put(marker1,id);
-
-        }
-        else
-        {
-            Toast.makeText(MapsActivity.this,"Greska",Toast.LENGTH_SHORT).show();
-        }
     }
+
+
+
+
 
     private BitmapDescriptor BitmapFromVector(Context applicationContext, int id) {
         Drawable vectorDrawable = ContextCompat.getDrawable(applicationContext, id);
@@ -554,8 +602,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // drawable which we have added.
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
 
+
         // below line is use to add bitmap in our canvas.
         Canvas canvas = new Canvas(bitmap);
+
 
         // below line is use to draw our
         // vector drawable in canvas.

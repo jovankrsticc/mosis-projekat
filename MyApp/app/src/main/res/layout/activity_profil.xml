@@ -9,17 +9,17 @@
 
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/porukeprofiltab"
         android:layout_width="85dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_poruke"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/mapprofiltab"
+        app:layout_constraintEnd_toStartOf="@+id/mapprofiltab"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+        app:layout_constraintTop_toTopOf="@+id/mapprofiltab" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/mapprofiltab"
         android:layout_width="151dp"
         android:layout_height="126dp"
         android:src="@drawable/ic_mapa"
@@ -29,14 +29,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/profilrangtab"
         android:layout_width="85dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_profil"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/mapprofiltab"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+        app:layout_constraintStart_toEndOf="@+id/mapprofiltab"
+        app:layout_constraintTop_toTopOf="@+id/mapprofiltab" />
 
     <EditText
         android:id="@+id/profil_telefon"
@@ -158,7 +158,7 @@
         android:layout_marginTop="28dp"
         android:backgroundTint="@color/bordo"
         android:text="Izmena"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profil_lozinka" />
 
@@ -220,7 +220,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/fui_ic_anonymous_white_24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/mapprofiltab"
         tools:srcCompat="@tools:sample/avatars" />
 
     <RadioGroup
@@ -256,6 +256,19 @@
         app:layout_constraintEnd_toEndOf="@+id/rbtntipkorisnika"
         app:layout_constraintHorizontal_bias="0.08"
         app:layout_constraintStart_toStartOf="@+id/rbtntipkorisnika"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/mapprofiltab" />
+
+    <Button
+        android:id="@+id/odjavaprofil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Odjavise"
+        app:layout_constraintBottom_toBottomOf="@+id/btnIzmenaProfila"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.685"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profil_lozinka"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

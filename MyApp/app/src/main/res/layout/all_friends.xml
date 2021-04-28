@@ -51,11 +51,12 @@
                     android:textStyle="bold" />
 
                 <RatingBar
-                    android:id="@+id/ratingBar"
+                    android:id="@+id/ocenakorisnika"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:numStars="5"/>
+                    android:max="5"
+                    android:numStars="5" />
 
                 <TextView
                     android:id="@+id/uuid_korisnika_poruke"
@@ -68,12 +69,6 @@
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/dodajPrijatelja"
-                    android:layout_width="117dp"
-                    android:layout_height="wrap_content"
-                    android:text="Dodaj prijatelja"/>
 
 
             </LinearLayout>

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="okvir">#8c8c8c</color>
+    <color name="poruke_pozadina">#f2f2f2</color>
     <color name="bordo">#A30014</color>
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>

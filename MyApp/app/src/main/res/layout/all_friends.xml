@@ -27,7 +27,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/rang_user_name"
+                    android:id="@+id/poruke_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
@@ -39,7 +39,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/rang_prezime"
+                    android:id="@+id/poruke_prezime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
@@ -58,7 +58,7 @@
                     android:numStars="5"/>
 
                 <TextView
-                    android:id="@+id/uuid_korisnika"
+                    android:id="@+id/uuid_korisnika_poruke"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"

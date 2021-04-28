@@ -39,7 +39,7 @@
         android:layout_width="74dp"
         android:layout_height="58dp"
         android:src="@drawable/ic_poruke_brn"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
@@ -69,7 +69,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/maptab"
         android:layout_width="151dp"
         android:layout_height="126dp"
         android:layout_marginTop="24dp"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/poruketab"
         android:layout_width="85dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_poruke"

@@ -15,9 +15,9 @@ public class AddFriendViewHolder extends RecyclerView.ViewHolder
 
     public AddFriendViewHolder(@NonNull View itemView) {
         super(itemView);
-        mUserName = itemView.findViewById(R.id.rang_user_name);
-        mPrezime = itemView.findViewById(R.id.rang_prezime);
-        mUuidKorisnika = itemView.findViewById(R.id.uuid_korisnika);
+        mUserName = itemView.findViewById(R.id.poruke_user_name);
+        mPrezime = itemView.findViewById(R.id.poruke_prezime);
+        mUuidKorisnika = itemView.findViewById(R.id.uuid_korisnika_poruke);
         mUuidKorisnika.setVisibility(View.GONE);
         mAddFriend = itemView.findViewById(R.id.dodajPrijatelja);
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,8 +37,9 @@ public class Chat extends AppCompatActivity {
     ImageView sendButton;
     EditText messageArea;
     ScrollView scrollView;
-    FirebaseDatabase database,reference1, reference2;
-    DatabaseReference ref,ref1;
+    User korisnik,Drugikorisnik;
+    FirebaseDatabase database;
+    DatabaseReference ref,ref1,ref2,dalismoprijatelji,prijateljstva;
     private FirebaseAuth fAuth;
 
     @Override
@@ -52,8 +54,10 @@ public class Chat extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         fAuth = FirebaseAuth.getInstance();
         ref1 = database.getReference("Users");
+        prijateljstva = FirebaseDatabase.getInstance().getReference().child("Friendships");
+
         String id;
-        User korisnik;
+
         if (fAuth.getCurrentUser() != null) {
             id = fAuth.getCurrentUser().getUid();
             ref1.child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -63,10 +67,58 @@ public class Chat extends AppCompatActivity {
                         Log.e("firebase", "Error getting data", task.getException());
                     } else {
                         User u = task.getResult().getValue(User.class);
+                        korisnik =  u;
                         PorukaZaglavlje.korisnik=id;
                         //Log.d("firebase", u);
                         // Log.d("firebase", String.valueOf(task.getResult().getValue()));
                     }
+                }
+            });
+
+            ref1.child(PorukaZaglavlje.kome).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if (!task.isSuccessful()) {
+                        Log.e("firebase", "Error getting data", task.getException());
+                    } else {
+                        User u = task.getResult().getValue(User.class);
+                        Drugikorisnik =  u;
+                        TextView t= (TextView) findViewById(R.id.ImeIPrezimeUchatu);
+                        t.setText(u.firstName+" "+u.lastName);
+                        //Log.d("firebase", u);
+                        // Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    }
+                }
+            });
+            Button but = (Button) findViewById(R.id.PruziusluguKorisnikuChat);
+
+            but.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String punanziv=(new StringBuilder()).append("Friendships/").append(id).toString();
+                    dalismoprijatelji=database.getReference(punanziv);
+                    dalismoprijatelji.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.hasChild(PorukaZaglavlje.kome)) {
+                                // run some code
+                                Log.d("firebase","Prijatelji velikai!!");
+                            }
+                            else
+                            {
+
+                                Log.d("firebase","Nismo jos prijatelji!!");
+                                prijateljstva.child(id).child(PorukaZaglavlje.kome).setValue(Drugikorisnik);
+                                prijateljstva.child(PorukaZaglavlje.kome).child(id).setValue(korisnik);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
                 }
             });
 
@@ -76,6 +128,8 @@ public class Chat extends AppCompatActivity {
             put=(new StringBuilder()).append("Poruke/").append(id).append("/").append(PorukaZaglavlje.kome).toString();
             Log.d("firebase", put);
             ref = database.getReference(put);
+            put=(new StringBuilder()).append("Poruke/").append(PorukaZaglavlje.kome).append("/").append(id).toString();
+            ref2=database.getReference(put);
 
             //reference2 = FirebaseDatabase.getInstance();//new Firebase("https://android-chat-app-e711d.firebaseio.com/messages/" + UserDetails.chatWith + "_" + UserDetails.username);
 
@@ -83,10 +137,13 @@ public class Chat extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     String messageText = messageArea.getText().toString();
-
+                    messageArea.setText("");
                     if (!messageText.equals("")) {
                         Poruka p = new Poruka(PorukaZaglavlje.korisnik,PorukaZaglavlje.kome,messageText);
+
                         ref.push().setValue(p);
+                        ref2.push().setValue(p);
+
                         //reference2.push().setValue(map);
                     }
                 }
@@ -103,9 +160,9 @@ public class Chat extends AppCompatActivity {
                             String userName = p.korisnik;
 
                             if (userName.equals(PorukaZaglavlje.korisnik.toString())) {
-                                addMessageBox(message, 1);
+                                addMessageBox("JA: " + message, 1);
                             } else {
-                                addMessageBox( message, 2);
+                                addMessageBox(  Drugikorisnik.firstName+" "+Drugikorisnik.lastName+": "+message  , 2);
                             }
                         }
                     }

@@ -76,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private View popupInputDialogView;
     private GoogleMap mMap;
-    private ImageView btnFilterVolonter, addObject,profilpoziv;
+    private ImageView btnFilterVolonter, addObject,profilpoziv,porukepoziv;
     private TextView cancelDialogButton;
     private DatabaseReference reference,objReference;
     private FirebaseAuth fAuth;
@@ -118,6 +118,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         sReference = FirebaseStorage.getInstance().getReference();
 
+        porukepoziv= (ImageView) findViewById(R.id.poruketab);
+        porukepoziv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MapsActivity.this, ListaPoruka.class));
+            }
+        });
         profilpoziv = findViewById(R.id.mojprofil_volonter);
         profilpoziv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +132,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(new Intent(MapsActivity.this, RangActivity.class));
             }
         });
+
+        ImageView b=(ImageView) findViewById(R.id.Porukebtn_map);
+        b.setEnabled(false);
+        b.setVisibility(View.INVISIBLE);
 
         addObject = findViewById(R.id.btnAddObj);
         addObject.setOnClickListener(new View.OnClickListener() {
@@ -648,15 +659,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         marker.showInfoWindow();
         ImageView b=(ImageView) findViewById(R.id.Porukebtn_map);
-        b.setVisibility(View.VISIBLE);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PorukaZaglavlje.kome=hashMapMarkerID.get(marker);
-                Log.d("firebase",PorukaZaglavlje.kome);
-                startActivity(new Intent(MapsActivity.this, Chat.class));
-            }
-        });
+        if(hashMapMarkerID.get(marker)!=null && hashMapMarkerID.get(marker)!= userID )
+        {
+            b.setVisibility(View.VISIBLE);
+            b.setEnabled(true);
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PorukaZaglavlje.kome=hashMapMarkerID.get(marker);
+                    Log.d("firebase",PorukaZaglavlje.kome);
+                    startActivity(new Intent(MapsActivity.this, Chat.class));
+                }
+            });
+        }
+        else
+        {
+            b.setVisibility(View.INVISIBLE);
+            b.setEnabled(false);
+        }
 
         return true;
     }

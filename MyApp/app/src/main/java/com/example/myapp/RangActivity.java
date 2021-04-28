@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -29,6 +30,7 @@ public class RangActivity extends AppCompatActivity {
 
     FirebaseRecyclerAdapter<User, AddFriendViewHolder> adapter;
     FirebaseRecyclerOptions<User> options;
+    ImageView poruketabpoziv,maptabporukerpoziv;
     DatabaseReference korisniciReference, zahteviZaPrijateljstvoReference, korisnik,listaprijatelja;
     RecyclerView recyclerView;
     FirebaseAuth mAuth;
@@ -41,6 +43,22 @@ public class RangActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rang);
+
+        maptabporukerpoziv = (ImageView) findViewById(R.id.maptabprofil);
+        maptabporukerpoziv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RangActivity.this, MapsActivity.class));
+            }
+        });
+
+        poruketabpoziv = (ImageView) findViewById(R.id.poruketabprofil);
+        poruketabpoziv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RangActivity.this, ListaPoruka.class));
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();

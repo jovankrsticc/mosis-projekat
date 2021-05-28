@@ -155,7 +155,8 @@
         android:id="@+id/btnIzmenaProfila"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/bordo"
         android:text="Izmena"
         app:layout_constraintEnd_toStartOf="@+id/button2"
@@ -224,7 +225,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <RadioGroup
-        android:id="@+id/rbtntipkorisnika"
+        android:id="@+id/rbtnnotifikacije"
         android:layout_width="103dp"
         android:layout_height="97dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -236,7 +237,8 @@
             android:id="@+id/rbUkljuciNotifikacije"
             android:layout_width="96dp"
             android:layout_height="38dp"
-            android:text="Ukluči" />
+            android:text="Ukluči"
+            android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/rbIsljuci_notifikacije"
@@ -244,7 +246,8 @@
             android:layout_height="35dp"
             android:layout_marginTop="8dp"
             android:checked="true"
-            android:text="Isključi" />
+            android:text="Isključi"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
     <TextView
@@ -253,16 +256,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Notifikacije"
-        app:layout_constraintEnd_toEndOf="@+id/rbtntipkorisnika"
+        app:layout_constraintEnd_toEndOf="@+id/rbtnnotifikacije"
         app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintStart_toStartOf="@+id/rbtntipkorisnika"
+        app:layout_constraintStart_toStartOf="@+id/rbtnnotifikacije"
         app:layout_constraintTop_toBottomOf="@+id/mapprofiltab" />
 
     <Button
         android:id="@+id/odjavaprofil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="24dp"
         android:text="Odjavise"
         app:layout_constraintBottom_toBottomOf="@+id/btnIzmenaProfila"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,24 +1,33 @@
 package com.example.myapp;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,13 +35,17 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -61,27 +74,32 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener, DatePickerDialog.OnDateSetListener {
 
     private View popupInputDialogView;
     private GoogleMap mMap;
     private CheckBox filterkorisnik,filtervolonter;
     private ImageView btnFilterVolonter, addObject,profilpoziv,porukepoziv;
     private TextView cancelDialogButton;
-    private DatabaseReference reference,objReference;
+    private DatabaseReference reference,objReference,friendRef;
     private FirebaseAuth fAuth;
     private StorageReference sReference;
     private LocationManager locationManager;
@@ -89,6 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int MIN_DISTANCE=1;
     private String userID;
     private HashMap<String,Marker> hashMapMarker = new HashMap<>();
+    private HashMap<String,Marker> hashMapObjectMarter = new HashMap<>();
     private HashMap<Marker,String> hashMapMarkerID = new HashMap<>();
     private Collection<Marker> markers;
     private Button btn,radiusBtn,dateBtn;
@@ -96,7 +115,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean prikazikorisnike=true;
     public boolean prikazivolontere=true;
 
+    public Date vremeistekaakcije;
 
+    private Resources mResources;
 
     public boolean radiusClicked = false;
     public CircleOptions circleOptions;
@@ -106,9 +127,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public MyLocation currentLocation;
     public SearchView searchView;
     private AlertDialog alertDialog;
+    private TextView vreme;
+
     DatabaseReference geo = FirebaseDatabase.getInstance().getReference().child("Geofence");
     GeoFire geoFire = new GeoFire(geo);
     ArrayList<String> arrayListUserIds = new ArrayList<String>();
+    ArrayList<String> Prijatelji = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +143,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        vremeistekaakcije= new Date();
 
         fAuth = FirebaseAuth.getInstance();
         userID = fAuth.getCurrentUser().getUid();
@@ -158,6 +185,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+         friendRef= FirebaseDatabase.getInstance().getReference().child("Friendships").child(userID);
+         friendRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
+                    Prijatelji.add(childDataSnapshot.getKey());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
         btnFilterVolonter = findViewById(R.id.btnFilterOpenVolonter);
 
         btnFilterVolonter.setOnClickListener(new View.OnClickListener() {
@@ -189,57 +233,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 filterkorisnik= alertDialog.findViewById(R.id.ckprikayklijenata);
                 filtervolonter=alertDialog.findViewById(R.id.ckprikazvolonter);
                 filterkorisnik.setChecked(prikazikorisnike);
-                filtervolonter.setChecked(prikazikorisnike);
+                filtervolonter.setChecked(prikazivolontere);
 
                 filterkorisnik.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         prikazikorisnike=b;
-                        if(b)
-                        {
-                            Log.d("testjox","Korisnik True");
-                        }
-                        else
-                        {
-                            Log.d("testjox","Korisnik False");
-                        }
                     }
                 });
 
-                filtervolonter=alertDialog.findViewById(R.id.ckprikazvolonter);
+                //filtervolonter=alertDialog.findViewById(R.id.ckprikazvolonter);
                 filtervolonter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         prikazivolontere=b;
                     }
+
                 });
-                /*cancelDialogButton = findViewById(R.id.zatvoridialogvolonter);
-                if(cancelDialogButton!=null)
-                {
-                    cancelDialogButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            alertDialog.cancel();
+
+                TextView dateSpinner = (TextView) alertDialog.findViewById(R.id.vremetrajanajakcijeinputfilter);
+
+                View.OnTouchListener Spinner_OnTouch = new View.OnTouchListener() {
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            showDatePickerDialog(v);
                         }
-                    });
-                }*/
-
-
-                /*if (mapCircle != null) {
-                    mapCircle.remove();
-                }
-                if (!radius.getText().toString().isEmpty()) {
-                    if (!radius.getText().toString().equals(radiusString)) {
-                        if (radiusString.equals(""))
-                            radiusClicked = !radiusClicked;
-                        radiusString = radius.getText().toString();
-                        addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
-                    } else {
-                        radiusClicked = !radiusClicked;
-                        radiusString = "";
+                        return true;
                     }
-                }*/
+                };
 
+                vreme=dateSpinner;
+
+                dateSpinner.setOnTouchListener(Spinner_OnTouch);
             }
         });
 
@@ -269,7 +294,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        createNotificationChannel();
+
+
+
+        //createNotificationChannel();
     }
 
 
@@ -279,7 +307,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void filtriranjevolontera(View view)
-
     {
         radius =popupInputDialogView.findViewById(R.id.profil_adresa);//findViewById(R.id.editRadius);
         if (mapCircle != null) {
@@ -297,6 +324,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         alertDialog.cancel();
+        getLocationUpdates();
+        showObjectMarker();
         showUsers();
 
     }
@@ -382,7 +411,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             addCircle(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), Float.valueOf(radiusString));
         }
 
-        geoFire.setLocation(userID, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        /*geoFire.setLocation(userID, new GeoLocation(location.getLatitude(), location.getLongitude()));
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 2);
         geoQuery.removeAllListeners();
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -406,7 +435,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onGeoQueryError(DatabaseError error) {
             }
-        });
+        });*/
     }
 
 
@@ -420,7 +449,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     {
                         try {
                             //   Toast.makeText(MapsActivity.this,"Child added"+snapshot.getValue(),Toast.LENGTH_SHORT).show();
-                            addMarker(snapshot.getValue(User.class),snapshot.getKey(),"friend");
+                            Log.d("testjox","Ulazi odavde i ne brise!!!!!!");
+                            Marker marker = hashMapMarker.get(snapshot.getKey());
+                            if(marker!=null)
+                            {
+                                hashMapMarkerID.remove(marker);
+                                marker.remove();
+                                hashMapMarker.remove(snapshot.getKey());
+                            }
+                            if(Prijatelji.contains(snapshot.getKey()))
+                            {
+
+                                addMarker(snapshot.getValue(User.class),snapshot.getKey(),"friend");
+                            }
+                            else
+                            {
+                                Log.d("testjox","id je:"+snapshot.getKey());
+                                addMarker(snapshot.getValue(User.class),snapshot.getKey(),"user");
+                            }
+
+                            if(snapshot.getKey().equals(userID))
+                            {
+                                LatLng l=new LatLng(snapshot.child("myLocation").getValue(MyLocation.class).getLatitude(),snapshot.child("myLocation").getValue(MyLocation.class).getLongitude());
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,12));
+                            }
+
                         }
                         catch (Exception e)
                         {
@@ -444,9 +497,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 hashMapMarker.remove(snapshot.getKey());
                             }
 
-                            addMarker(snapshot.getValue(User.class),snapshot.getKey(),"friend");
-                            LatLng l=new LatLng(snapshot.child("myLocation").getValue(MyLocation.class).getLatitude(),snapshot.child("myLocation").getValue(MyLocation.class).getLongitude());
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,10));
+                            if(Prijatelji.contains(snapshot.getKey()))
+                            {
+                                addMarker(snapshot.getValue(User.class),snapshot.getKey(),"friend");
+
+                            }
+                            else
+                            {
+                                addMarker(snapshot.getValue(User.class),snapshot.getKey(),"user");
+                            }
+
+                            /*if(snapshot.getKey().equals(userID))
+                            {
+                                LatLng l=new LatLng(snapshot.child("myLocation").getValue(MyLocation.class).getLatitude(),snapshot.child("myLocation").getValue(MyLocation.class).getLongitude());
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,12));
+                            }*/
                         }
 
                         catch (Exception e)
@@ -476,15 +541,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void addMarker(User user,String id,String typeMarker) {
-        Log.d("testjox","Tip korisnika "+user.userType);
-        if(user.userType.equals("Korisnik") & prikazikorisnike==true)
-        {
-            Log.d("testjox","i odobrenje ima ");
-        }
-        if((user.userType.equals("Volonter") && prikazivolontere==true)||(user.userType.equals("Korisnik") && prikazikorisnike==true))
-        {
 
-                Log.d("testjox","Tip korisnika "+user.userType);
+        if((user.userType.equals("Volonter") & prikazivolontere==true)||(user.userType.equals("Korisnik") & prikazikorisnike==true))
+        {
                 LatLng location = new LatLng(user.myLocation.getLatitude(), user.myLocation.getLongitude());
                 if (typeMarker.equals("friend")) {
                     sReference.child("profile_images").child(id).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -507,9 +566,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             //Marker newMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(value.getMyLocation().getLatitude(), value.getMyLocation().getLongitude()))
                                             //        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
+
+                                            int boja=Color.BLUE;
+                                            if(user.userType.equals("Volonter"))
+                                            {
+                                                boja=Color.RED;
+                                            }
+
+
                                             Marker marker = mMap.addMarker(new MarkerOptions()
                                                     .position(location)
-                                                    .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
+                                                    .icon(BitmapDescriptorFactory.fromBitmap(BitmapCircle(smallMarker,boja)))
                                                     .title(user.userName)
                                                     .snippet("Ime: " + user.firstName + "\n" +
                                                             "Prezime: " + user.lastName + "\n")
@@ -536,7 +603,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                     LatLng latLng = arg0.getPosition();
 
-                                                    Button poruka = (Button) v.findViewById(R.id.poruka_btn);
+                                                    //Button poruka = (Button) v.findViewById(R.id.poruka_btn);
                                                     TextView tv1 = (TextView) v.findViewById(R.id.textView1);
                                                     TextView tv2 = (TextView) v.findViewById(R.id.textView2);
                                                     String title = arg0.getTitle();
@@ -568,18 +635,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             });
 
                 } else if (typeMarker.equals("user")) {
-                    Marker marker1 = mMap.addMarker(new MarkerOptions()
-                            .position(location)
-                            .title(user.userName)
-                            .icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_person_pin_circle_24))
-                            .snippet("Ime: " + user.firstName + "\n" + "Prezime: " + user.lastName)
+                    Marker marker1;
+                    if(id.equals(userID))
+                    {
+                        marker1 = mMap.addMarker(new MarkerOptions()
+                                .position(location)
+                                .title(user.userName)
+                                .icon(BitmapFromVector(getApplicationContext(), R.drawable.mojalokacija))
+                                .snippet("Ime: " + user.firstName + "\n" + "Prezime: " + user.lastName)
 
-                    );
+                        );
+
+                        mMap.setOnMarkerClickListener(MapsActivity.this);
+                        hashMapMarker.put(id, marker1);
+                        hashMapMarkerID.put(marker1, id);
+                    }
+                    else {
+                        if (user.userType.equals("Volonter")) {
+                            marker1 = mMap.addMarker(new MarkerOptions()
+                                    .position(location)
+                                    .title(user.userName)
+                                    .icon(BitmapFromVector(getApplicationContext(), R.drawable.beli_persona))
+                                    .snippet("Ime: " + user.firstName + "\n" + "Prezime: " + user.lastName)
+
+                            );
+
+                            mMap.setOnMarkerClickListener(MapsActivity.this);
+                            hashMapMarker.put(id, marker1);
+                            hashMapMarkerID.put(marker1, id);
+                        } else if (user.userType.equals("Korisnik")) {
+                            marker1 = mMap.addMarker(new MarkerOptions()
+                                    .position(location)
+                                    .title(user.userName)
+                                    .icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_person_pin_circle_24))
+                                    .snippet("Ime: " + user.firstName + "\n" + "Prezime: " + user.lastName)
+                            );
+
+                            mMap.setOnMarkerClickListener(MapsActivity.this);
+                            hashMapMarker.put(id, marker1);
+                            hashMapMarkerID.put(marker1, id);
+
+                        }
+                    }
 
 
-                    mMap.setOnMarkerClickListener(MapsActivity.this);
-                    hashMapMarker.put(id, marker1);
-                    hashMapMarkerID.put(marker1, id);
+
 
                 } else {
                     Toast.makeText(MapsActivity.this, "Greska", Toast.LENGTH_SHORT).show();
@@ -615,14 +715,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
+    private Bitmap BitmapCircle(Bitmap bitmap,int boja)
+    {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int radius = Math.min(h / 2, w / 2);
+        Bitmap output = Bitmap.createBitmap(w + 100, h + 100, Bitmap.Config.ARGB_8888);
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+
+        Canvas c = new Canvas(output);
+        c.drawARGB(0, 0, 0, 0);
+        p.setStyle(Paint.Style.FILL);
+
+        c.drawCircle((w / 2) + 50, (h / 2) + 50, radius, p);
+
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        c.drawBitmap(bitmap, 50, 50, p);
+        p.setXfermode(null);
+        p.setStyle(Paint.Style.STROKE);
+        p.setColor(boja);
+        p.setStrokeWidth(10);
+        c.drawCircle((w / 2) + 50, (h / 2) + 50, radius, p);
+
+        return output;
+    }
 
     private void showObjectMarker() {
-        objReference.addChildEventListener(new ChildEventListener() {
+        com.google.firebase.Timestamp t=new Timestamp(vremeistekaakcije);
+        Log.d("testjox","marker vreme"+t.getSeconds());
+        for (String key: hashMapObjectMarter.keySet()) {
+           hashMapObjectMarter.get(key).remove();
+        }
+        objReference.orderByChild("end")
+                .startAt(t.getSeconds()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if(snapshot.exists())
                 {
                     try{
+
+                        Marker marker = hashMapObjectMarter.get(snapshot.getKey());
+                        Log.d("testjox","marker"+snapshot.getValue(MyObject.class).name);
+                        if(marker!=null)
+                        {
+                            //hashMapMarkerID.remove(marker);
+                            marker.remove();
+
+                            hashMapObjectMarter.remove(snapshot.getKey());
+                        }
 
                         addObjectMarker(snapshot.getValue(MyObject.class),snapshot.getKey());
                     }
@@ -639,13 +783,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 {
                     try
                     {
-                        Marker marker = hashMapMarker.get(snapshot.getKey());
+                        Marker marker = hashMapObjectMarter.get(snapshot.getKey());
                         if(marker!=null)
                         {
-                            hashMapMarkerID.remove(marker);
+                            //hashMapMarkerID.remove(marker);
                             marker.remove();
 
-                            hashMapMarker.remove(snapshot.getKey());
+                            hashMapObjectMarter.remove(snapshot.getKey());
                         }
                         addObjectMarker(snapshot.getValue(MyObject.class),snapshot.getKey());
 
@@ -675,19 +819,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void addObjectMarker(MyObject myObject,String id) {
+    public void showDatePickerDialog(View v) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "Date");
 
+    }
+
+    private void addObjectMarker(MyObject myObject,String id) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(myObject.end * 1000);
+        Date date = cal.getTime();
         LatLng mylocation = new LatLng(myObject.location.getLatitude(), myObject.location.getLongitude());
         Toast.makeText(MapsActivity.this,"LAT "+mylocation.latitude+"  LONG "+mylocation.longitude,Toast.LENGTH_SHORT).show();
         Marker objMarker = mMap.addMarker(new MarkerOptions()
                 .position(mylocation)
-                .title(myObject.name)
+                .title(myObject.name+"  "+date.toString())
                 .icon(BitmapFromVector(getApplicationContext(),R.drawable.ic_baseline_store_24))
 
         );
 
         mMap.setOnMarkerClickListener(MapsActivity.this);
-        hashMapMarker.put(id,objMarker);
+        hashMapObjectMarter.put(id,objMarker);
         //ID.put(objMarker,id);
     }
 
@@ -757,5 +909,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(100, builder.build());
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);
+        String currentDateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.getTime());
+
+        vremeistekaakcije=c.getTime();
+
+        vreme=(TextView)  alertDialog.findViewById(R.id.vremetrajanajakcijeinputfilter);
+        vreme.setText(currentDateString);
     }
 }

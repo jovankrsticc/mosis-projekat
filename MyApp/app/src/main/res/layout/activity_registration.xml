@@ -210,7 +210,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <RadioGroup
-        android:id="@+id/rbtntipkorisnika"
+        android:id="@+id/rbtnnotifikacije"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

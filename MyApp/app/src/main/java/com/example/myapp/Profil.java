@@ -3,16 +3,24 @@ package com.example.myapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -43,15 +51,18 @@ public class Profil extends AppCompatActivity {
     private EditText ime,prezime,korisnicko,lozinka,telefon,adresa;
     private FirebaseAuth fAuth;
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
+    private RadioButton notiukl,notiisklj;
     private DatabaseReference ref;
     private StorageReference sReference;
     private String id;
     private  boolean izmene;
+    public static final String CHANNEL_ID = "volonterServiceChannel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
+        createNotificationChannel();
         myImageView = findViewById(R.id.imageView_registracija);
         ime= findViewById(R.id.profil_ime);
         prezime = findViewById(R.id.profil_prezime);
@@ -59,15 +70,25 @@ public class Profil extends AppCompatActivity {
         lozinka = findViewById(R.id.profil_lozinka);
         adresa = findViewById(R.id.profil_adresa);
         telefon= findViewById(R.id.profil_telefon);
+        notiukl=findViewById(R.id.rbUkljuciNotifikacije);
+        notiisklj=findViewById(R.id.rbIsljuci_notifikacije);
 
-        maptab= findViewById(R.id.maptabprofil);
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (VolonterService.class.getName().equals(service.service.getClassName())) {
+                notiukl.setChecked(true);
+                notiisklj.setChecked(false);
+            }
+        }
+
+        maptab= findViewById(R.id.mapprofiltab);
         maptab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Profil.this, MapsActivity.class));
             }
         });
-        poruketab = findViewById(R.id.poruketabprofil);
+        poruketab = findViewById(R.id.porukeprofiltab);
         poruketab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,6 +177,45 @@ public class Profil extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onRadioButtonClicked(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.rbIsljuci_notifikacije:
+                if (checked)
+                    stopService();
+                    break;
+            case R.id.rbUkljuciNotifikacije:
+                if (checked)
+                    startService();
+                    break;
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Volonter Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
+
+    public void startService() {
+        String input = "Ukljucen je servis!!!";
+        Intent serviceIntent = new Intent(this, VolonterService.class);
+        serviceIntent.putExtra("inputExtra", input);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, VolonterService.class);
+        stopService(serviceIntent);
     }
 
     public void ucitajsliku()

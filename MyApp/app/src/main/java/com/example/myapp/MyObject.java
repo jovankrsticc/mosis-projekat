@@ -6,6 +6,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -20,7 +21,7 @@ public class MyObject {
 
     public String name;
     public MyLocation location;
-    public Date end;
+    public long end;
 
     public MyObject()
     {
@@ -28,11 +29,11 @@ public class MyObject {
     }
 
 
-    public MyObject(String name, double latitude, double longitude,Date end)
+    public MyObject(String name, double latitude, double longitude, long end)
     {
         this.name=name;
         this.location= new MyLocation(latitude,longitude);
-        this.end=new Date();
+        //this.end=new Date();
         this.end=end;
 
     }

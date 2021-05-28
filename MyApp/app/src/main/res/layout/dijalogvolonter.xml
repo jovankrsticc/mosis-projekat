@@ -48,8 +48,8 @@
             <TextView
                 android:gravity="end"
                 android:text="Udaljenost"
-                android:textColor="@color/bordo"
-                android:textAlignment="textStart" />
+                android:textAlignment="textStart"
+                android:textColor="@color/bordo" />
 
         </TableRow>
 
@@ -63,6 +63,7 @@
 
             <EditText
                 android:id="@+id/profil_adresa"
+                android:backgroundTint="@color/bordo"
                 android:inputType="number" />
 
         </TableRow>
@@ -98,7 +99,29 @@
                 android:textColor="@color/bordo"
                 android:text="Prikaži klijente" />
         </TableRow>
+        <TableRow
+            android:layout_height="93dp"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
+                android:text="Vreme trajanja akcije" />
+        </TableRow>
+        <TableRow
+            android:layout_height="93dp"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/vremetrajanajakcijeinputfilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="showDatePickerDialog"
+                android:backgroundTint="@color/bordo"
+                style="@android:style/Widget.Holo.Spinner"/>
+
+
+        </TableRow>
         <TableRow
             android:layout_height="93dp"
             android:gravity="center_horizontal">

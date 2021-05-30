@@ -32,7 +32,7 @@ public class User {
         this.email=email;
         this.password=password;
         this.userType=userType;
-        this.rate=0;
+        this.rate=5;
         this.myLocation= new MyLocation();
     }
     public User(String firstName,String lastName, String userName, String number,String email,String password,Integer rate,String userType)
